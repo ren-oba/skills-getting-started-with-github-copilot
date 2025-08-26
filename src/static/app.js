@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("/activities");
       const activities = await response.json();
 
-      // Clear loading message
       activitiesList.innerHTML = "";
+      activitySelect.innerHTML = '<option value="">-- Select an activity --</option>'; // reset dropdown
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -20,11 +20,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
+        // Participants section
+        const participantsHTML = `
+          <div class="activity-participants">
+            <div class="activity-participants-title">Participants:</div>
+            <ul class="activity-participants-list">
+              ${
+                details.participants.length > 0
+                  ? details.participants.map(email => `<li>${email}</li>`).join("")
+                  : '<li><em>No participants yet</em></li>'
+              }
+            </ul>
+          </div>
+        `;
+
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          ${participantsHTML}
         `;
 
         activitiesList.appendChild(activityCard);
